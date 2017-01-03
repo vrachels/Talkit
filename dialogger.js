@@ -38,24 +38,34 @@ var allowableConnections =
 	['dialogue.Text', 'dialogue.Node'],
 	['dialogue.Text', 'dialogue.Choice'],
 	['dialogue.Text', 'dialogue.Set'],
+	['dialogue.Text', 'dialogue.Call'],
 	['dialogue.Text', 'dialogue.Branch'],
 	['dialogue.Node', 'dialogue.Text'],
 	['dialogue.Node', 'dialogue.Node'],
 	['dialogue.Node', 'dialogue.Choice'],
 	['dialogue.Node', 'dialogue.Set'],
+	['dialogue.Node', 'dialogue.Call'],
 	['dialogue.Node', 'dialogue.Branch'],
 	['dialogue.Choice', 'dialogue.Text'],
 	['dialogue.Choice', 'dialogue.Node'],
 	['dialogue.Choice', 'dialogue.Set'],
+	['dialogue.Choice', 'dialogue.Call'],
 	['dialogue.Choice', 'dialogue.Branch'],
 	['dialogue.Set', 'dialogue.Text'],
 	['dialogue.Set', 'dialogue.Node'],
 	['dialogue.Set', 'dialogue.Set'],
+	['dialogue.Set', 'dialogue.Call'],
 	['dialogue.Set', 'dialogue.Branch'],
+	['dialogue.Call', 'dialogue.Text'],
+	['dialogue.Call', 'dialogue.Node'],
+	['dialogue.Call', 'dialogue.Set'],
+	['dialogue.Call', 'dialogue.Call'],
+	['dialogue.Call', 'dialogue.Branch'],
 	['dialogue.Branch', 'dialogue.Text'],
 	['dialogue.Branch', 'dialogue.Node'],
 	['dialogue.Branch', 'dialogue.Set'],
 	['dialogue.Branch', 'dialogue.Branch'],
+	['dialogue.Branch', 'dialogue.Call'],
 ];
 
 function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkView)
@@ -141,8 +151,85 @@ joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 });
 joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 {
-	template:
-	[
+	defaults: joint.util.deepSupplement(
+		{
+            type: 'dialogue.Node',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            attrs: {
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+            }
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Text = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement(
+        {
+            type: 'dialogue.Text',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            actor: '',
+            attrs: {
+                '.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+            }
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Choice = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement(
+        {
+            type: 'dialogue.Choice',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            title: '',
+            name: ''
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Branch = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement(
+        {
+            type: 'dialogue.Branch',
+            inPorts: ['input'],
+            outPorts: ['output0'],
+            values: []
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Set = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement(
+        {
+            type: 'dialogue.Set',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            value: ''
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.Call = joint.shapes.devs.Model.extend({
+    defaults: joint.util.deepSupplement(
+        {
+            type: 'dialogue.Call',
+            inPorts: ['input'],
+            outPorts: ['output'],
+            parameters: []
+        },
+        joint.shapes.dialogue.Base.prototype.defaults
+    )
+});
+
+joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
+	template: [
 		'<div class="node">',
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
@@ -241,7 +328,7 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
 		'<div class="node">',
 		'<span class="label"> </span>',
 		'<button class="delete">x</button>',
-        '<input type="choice" class="title" placeholder="Title" />',
+        '<input type="choice" class="title" placeholder="Meta" />',
         '<p> <textarea type="text" class="name" rows="4" cols="27" placeholder="Speech"></textarea></p>',
 		'</div>',
         		
@@ -473,10 +560,8 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 
 	updateSize: function()
 	{
-		var textField = this.$box.find('input.name');
-		var height = textField.outerHeight(true);
-		this.model.set('size', { width: 200, height: 100 + Math.max(0, (this.model.get('outPorts').length - 1) * height) });
-	},
+		this.model.set('size', { width: widgetWidth, height: 100 + Math.max(0, (this.model.get('outPorts').length - 1) * 32) });
+	}
 });
 
 
@@ -524,8 +609,98 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
 	},
 });
 
-function gameData()
-{
+joint.shapes.dialogue.CallView = joint.shapes.dialogue.BaseView.extend({
+	template: [
+		'<div class="node">',
+		'    <span class="label"></span>',
+		'    <button class="delete">x</button>',
+        '    <button class="add">+</button>',
+        '    <button class="remove">-</button>',
+		'    <input type="text" class="context" placeholder="context" />',
+		'    <input type="text" class="method" placeholder="method" />',
+		'    <input type="text" class="parameter" placeholder="parameter" />',
+		'</div>'
+	].join(''),
+
+	initialize: function() {
+		joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+        this.$box.find('.add').on('click', _.bind(this.addParameter, this));
+        this.$box.find('.remove').on('click', _.bind(this.removeParameter, this));
+		this.$box.find('input.context').on('change', _.bind(function(e) {
+			this.model.set('context', $(e.target).val());
+		}, this));
+		this.$box.find('input.method').on('change', _.bind(function(e) {
+			this.model.set('method', $(e.target).val());
+		}, this));
+	},
+
+    removeParameter: function() {
+        if (this.model.get('parameters').length > 0) {
+            var parameters = this.model.get('parameters').slice(0);
+            parameters.pop();
+            this.model.set('parameters', parameters);
+            this.updateSize();
+        }
+    },
+
+    addParameter: function() {
+        var parameters = this.model.get('parameters').slice(0);
+        parameters.push(null);
+        this.model.set('parameters', parameters);
+        this.updateSize();
+    },
+
+	updateBox: function() {
+		joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+		var context = this.$box.find('input.context');
+		if (!context.is(':focus')) {
+            context.val(this.model.get('context'));
+        }
+		var method = this.$box.find('input.method');
+		if (!method.is(':focus')) {
+            method.val(this.model.get('method'));
+        }
+        var parameters = this.model.get('parameters');
+        var parameterFields = this.$box.find('input.parameter');
+
+        // Add parameter fields if necessary
+        for (var i = parameterFields.length; i < parameters.length; i++) {
+            // Prevent paper from handling pointerdown.
+            var field1 = $('<input type="text" class="parameter" />');
+            field1.attr('placeholder', 'Parameter ' + (i + 1).toString());
+            field1.attr('index', i);
+            this.$box.append(field1);
+            field1.on('mousedown click', function(evt) { evt.stopPropagation(); });
+
+            // This is an example of reacting on the input change and storing the input data in the cell model.
+            field1.on('change', _.bind(function(evt) {
+                var parameters = this.model.get('parameters').slice(0);
+                parameters[$(evt.target).attr('index')] = $(evt.target).val();
+                this.model.set('parameters', parameters);
+            }, this));
+        }
+
+        // Remove value fields if necessary
+        for (var j = parameters.length; j < parameterFields.length; j++) {
+            $(parameterFields[j]).remove();
+        }
+
+        // Update value fields
+        parameterFields = this.$box.find('input.parameter');
+        for (var k = 0; k < parameterFields.length; k++) {
+            var field2 = $(parameterFields[k]);
+            if (!field2.is(':focus')) {
+                field2.val(parameters[k]);
+            }
+        }
+	},
+
+    updateSize: function() {
+        this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
+    }
+});
+
+function gameData() {
 	var cells = graph.toJSON().cells;
 	var nodesByID = {};
 	var cellsByID = {};
@@ -557,14 +732,17 @@ function gameData()
 				node.variable = cell.name;
 				node.value = cell.value;
 				node.next = null;
-                
+			} else if (node.type == 'Call') {
+				node.context = cell.context;
+                node.method = cell.method;
+                node.parameters = cell.parameters;
+				node.next = null;
 			}
 
 			else if (node.type == 'Choice') {
 			    node.name = cell.name;
 			    node.title = cell.title;
 			    node.next = null;
-
 			}
 			else
 			{
@@ -780,8 +958,12 @@ var paper = new joint.dia.Paper(
 	defaultLink: defaultLink,
 	validateConnection: validateConnection,
 	validateMagnet: validateMagnet,
-	snapLinks: { radius: 75 }
-
+	defaultRouter: {
+		name: 'manhattan',
+		args: {
+		step: 1
+		},
+	},
 });
 
 var panning = false;
@@ -948,7 +1130,8 @@ $('#paper').contextmenu(
 		{ text: 'Choice', alias: '1-2', action: add(joint.shapes.dialogue.Choice) },
 		{ text: 'Branch', alias: '1-3', action: add(joint.shapes.dialogue.Branch) },
 		{ text: 'Set', alias: '1-4', action: add(joint.shapes.dialogue.Set) },
-		{ text: 'Node', alias: '1-5', action: add(joint.shapes.dialogue.Node) },
+		{ text: 'Call', alias: '1-5', action: add(joint.shapes.dialogue.Call) },
+		{ text: 'Node', alias: '1-6', action: add(joint.shapes.dialogue.Node) },
 		{ type: 'splitLine' },
 		{ text: 'Save', alias: '2-1', action: save },
 		{ text: 'Load', alias: '2-2', action: load },
