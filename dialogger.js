@@ -219,7 +219,8 @@ joint.shapes.dialogue.Set = joint.shapes.devs.Model.extend({
 joint.shapes.dialogue.Call = joint.shapes.devs.Model.extend({
     defaults: joint.util.deepSupplement(
         {
-            type: 'dialogue.Call',
+			type: 'dialogue.Call',
+			size: { width: 200, height: 76, },
             inPorts: ['input'],
             outPorts: ['output'],
             parameters: []
@@ -465,7 +466,7 @@ joint.shapes.dialogue.Branch = joint.shapes.devs.Model.extend(
 	(
 		{
 			type: 'dialogue.Branch',
-			size: { width: 200, height: 100, },
+			size: { width: 200, height: 76, },
 			inPorts: ['input'],
 			outPorts: ['output0'],
 			values: [],
@@ -560,7 +561,10 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 
 	updateSize: function()
 	{
-		this.model.set('size', { width: widgetWidth, height: 100 + Math.max(0, (this.model.get('outPorts').length - 1) * 32) });
+		var width = this.model.get('size').width;
+		var height = 76 + Math.max(0, (this.model.get('outPorts').length - 1) * 25);
+		this.model.set('size', { width, height });
+		this.resize(width, height);
 	}
 });
 
@@ -696,7 +700,8 @@ joint.shapes.dialogue.CallView = joint.shapes.dialogue.BaseView.extend({
 	},
 
     updateSize: function() {
-        this.model.set('size', { width: widgetWidth, height: 128 + Math.max(0, (this.model.get('parameters').length - 1) * 32) });
+		var width = this.model.get('size').width;
+        this.model.set('size', { width, height: 101 + Math.max(0, (this.model.get('parameters').length - 1) * 25) });
     }
 });
 
