@@ -817,7 +817,7 @@ function offerDownload(name, data)
 {
 	var a = $('<a>');
 	a.attr('download', name);
-	a.attr('href', 'data:application/json,' + encodeURIComponent(JSON.stringify(data)));
+	a.attr('href', 'data:application/json,' + encodeURIComponent(JSON.stringify(data, undefined, 1)));
 	a.attr('target', '_blank');
 	a.hide();
 	$('body').append(a);
