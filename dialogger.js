@@ -526,6 +526,8 @@ $(window).resize(function () {
 });
 
 function addFileEntry(name) {
+	if (!name.endsWith('.json')) return;
+
 	var entry = $('<div>');
 	entry.text(name);
 	var deleteButton = $('<button class="delete">-</button>');
@@ -579,15 +581,18 @@ function AddNodeScript(url) {
 }
 function NodeScriptDone() {
 	if (--numNodeScriptsPending === 0) {
-		var items = [].concat(nodeCreateList).concat([
+		var items = [
+			{ type: 'group', text: 'Nodes', alias: '1-0', items: nodeCreateList },
 			{ type: 'splitLine' },
-			{ text: 'Save', alias: '2-1', action: save },
-			{ text: 'Load', alias: '2-2', action: load },
-			{ text: 'Import', id: 'import', alias: '2-3', action: importFile },
-			{ text: 'New', alias: '2-4', action: clear },
-			{ text: 'Export', id: 'export', alias: '2-5', action: exportFile },
-			{ text: 'Export game file', id: 'export-game', alias: '2-6', action: exportGameFile },
-		]);
+			{ type: 'group', text: 'File', alias: '2-0', items: [
+				{ text: 'Save', alias: '2-1', action: save },
+				{ text: 'Load', alias: '2-2', action: load },
+				{ text: 'Import', id: 'import', alias: '2-3', action: importFile },
+				{ text: 'New', alias: '2-4', action: clear },
+				{ text: 'Export', id: 'export', alias: '2-5', action: exportFile },
+				{ text: 'Export game file', id: 'export-game', alias: '2-6', action: exportGameFile },
+			]},
+		];
 
 		$('#paper').contextmenu({ width: 150, items });
 	}
