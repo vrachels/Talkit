@@ -153,7 +153,6 @@ Node styles
    
 }
 
-
 .node input[type="actor"]
 {
 	/* Enable interacting with inputs only. */
@@ -169,10 +168,8 @@ Node styles
 
 }
 
-
 .node input[type="choice"]
 {
-	/* Enable interacting with inputs only. */
 	pointer-events: auto;	
 	border: none;
 	box-sizing: border-box;
@@ -182,21 +179,15 @@ Node styles
 	padding: 4px;
     margin-right: 10px;
     float:right;
-
 }
-
 
 .node textarea 
 {
-    	/* Enable interacting with inputs only. */
 	pointer-events: auto;	
 	border: none;
 	box-sizing: border-box;
 	background-color: #456;
 	color: #fff;
-    
-
-
 }
 .node .label
 {
@@ -224,6 +215,11 @@ Node styles
 .node .label.Branch
 {
 	color: #ea6;
+}
+
+.node .label.Search
+{
+	color: rgb(15, 179, 0);
 }
 
 button
@@ -264,11 +260,37 @@ button.delete:hover
  
 }
 
-
-
 .node
 {
 	color: #fff;
+}
+
+/*
+Node style overrides
+*/
+
+.search #noResults
+{
+	color: #ffed00
+}
+
+.search #withResults
+{
+	color: rgb(204, 136, 204)
+}
+
+/*
+SVG overrides -- note the capitalized node type
+*/
+
+.Search .outPorts .port0 circle
+{
+	fill: #ffed00;
+}
+
+.Search .outPorts .port1 circle
+{
+	fill: rgb(204, 136, 204);
 }
 
 /*

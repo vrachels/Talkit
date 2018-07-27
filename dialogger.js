@@ -55,6 +55,8 @@ function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkVie
 	if (cellViewS == cellViewT)
 		return false;
 
+	if (!magnetT) return false;
+
 	// Can't connect to an output port
 	if (magnetT.attributes.magnet.nodeValue !== 'passive')
 		return false;
@@ -219,6 +221,19 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
 
 
 var gameDataHandler = {};
+var linkDataHandler = {};
+
+// deprecated: text and node allowed 'choices'.  Use Search and Select nodes
+linkDataHandler['Text'] = linkDataHandler['Node'] = function (cell, source, target) {
+	if (!target || target.type !== 'Choice') return false;
+
+	if (!source.choices) {
+		source.choices = [];
+		delete source.next;
+	}
+
+	source.choices.push(target.id);
+}
 
 function gameData() {
 	var cells = graph.toJSON().cells;
@@ -250,26 +265,10 @@ function gameData() {
 			var source = nodesByID[cell.source.id];
 			var target = cell.target ? nodesByID[cell.target.id] : null;
 			if (source) {
-				if (source.type == 'Branch') {
-					var portNumber = parseInt(cell.source.port.slice('output'.length));
-					var value;
-					if (portNumber == 0)
-						value = '_default';
-					else {
-						var sourceCell = cellsByID[source.id];
-						value = sourceCell.values[portNumber - 1];
-					}
-					source.branches[value] = target ? target.id : null;
-				}
-				else if ((source.type == 'Text' || source.type == 'Node') && target && target.type == 'Choice') {
-					if (!source.choices) {
-						source.choices = [];
-						delete source.next;
-					}
-					source.choices.push(target.id);
-				}
-				else
-					source.next = target ? target.id : null;
+				var handler = linkDataHandler[source.type];
+				var handled = handler ? handler(cell, source, target, { nodesByID, cellsByID }) : false;
+
+				if (!handled) source.next = target ? target.id : null;
 			}
 		}
 	}
@@ -568,8 +567,6 @@ function AddNodeType(text, obj) {
 		action: add(obj),
 	}
 	nodeCreateList.push(newObj);
-
-
 }
 
 var numNodeScriptsPending = 1;
@@ -582,16 +579,18 @@ function AddNodeScript(url) {
 function NodeScriptDone() {
 	if (--numNodeScriptsPending === 0) {
 		var items = [
-			{ type: 'group', text: 'Nodes', alias: '1-0', items: nodeCreateList },
+			{ type: 'group', text: 'Nodes', alias: '1-0', items: nodeCreateList.sort((a, b) => a.text.localeCompare(b.text)) },
 			{ type: 'splitLine' },
-			{ type: 'group', text: 'File', alias: '2-0', items: [
-				{ text: 'Save', alias: '2-1', action: save },
-				{ text: 'Load', alias: '2-2', action: load },
-				{ text: 'Import', id: 'import', alias: '2-3', action: importFile },
-				{ text: 'New', alias: '2-4', action: clear },
-				{ text: 'Export', id: 'export', alias: '2-5', action: exportFile },
-				{ text: 'Export game file', id: 'export-game', alias: '2-6', action: exportGameFile },
-			]},
+			{
+				type: 'group', text: 'File', alias: '2-0', items: [
+					{ text: 'Save', alias: '2-1', action: save },
+					{ text: 'Load', alias: '2-2', action: load },
+					{ text: 'Import', id: 'import', alias: '2-3', action: importFile },
+					{ text: 'New', alias: '2-4', action: clear },
+					{ text: 'Export', id: 'export', alias: '2-5', action: exportFile },
+					{ text: 'Export game file', id: 'export-game', alias: '2-6', action: exportGameFile },
+				]
+			},
 		];
 
 		$('#paper').contextmenu({ width: 150, items });
@@ -608,6 +607,7 @@ AddNodeScript('nodes/text.js');
 AddNodeScript('nodes/node.js');
 AddNodeScript('nodes/choice.js');
 AddNodeScript('nodes/select.js');
+AddNodeScript('nodes/search.js');
 //#endregion
 
 // Commit the local script

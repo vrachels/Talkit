@@ -106,6 +106,20 @@ gameDataHandler['dialogue.Branch'] = function (cell, node) {
     }
 }
 
+linkDataHandler['Branch'] = function (cell, source, target, scope) {
+	var portNumber = parseInt(cell.source.port.slice('output'.length));
+	var value;
+	if (portNumber == 0)
+		value = '_default';
+	else {
+		var sourceCell = scope.cellsByID[source.id];
+		value = sourceCell.values[portNumber - 1];
+	}
+	source.branches[value] = target ? target.id : null;
+
+	return true;
+}
+
 allTypes['dialogue.Branch'] = true;
 allTypesExceptChoice['dialogue.Branch'] = true;
 allowableConnections['dialogue.Branch'] = allTypesExceptChoice;

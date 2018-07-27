@@ -20,5 +20,5 @@ allTypes['dialogue.Node'] = true;
 allTypesExceptChoice['dialogue.Node'] = true;
 allowableConnections['dialogue.Node'] = allTypes;
 
-AddNodeType('Node', joint.shapes.dialogue.Node);
+// AddNodeType('Node', joint.shapes.dialogue.Node);
 NodeScriptDone();

@@ -20,7 +20,6 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
                 '<div class="node">',
                 '<span class="label"> </span>',
                 '<button class="delete">x</button>',
-                '<input type="choice" class="title" placeholder="Meta" />',
                 '<p> <textarea type="text" class="name" rows="4" cols="27" placeholder="Speech"></textarea></p>',
                 '</div>',
 
@@ -35,17 +34,9 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
             this.$box = $(_.template(this.template)());
             // Prevent paper from handling pointerdown.
             this.$box.find('textarea').on('mousedown click', function (evt) { evt.stopPropagation(); });
-            this.$box.find('input').on('mousedown click', function (evt) { evt.stopPropagation(); });
-            this.$box.find('idd').on('mousedown click', function (evt) { evt.stopPropagation(); });
 
-            // This is an example of reacting on the input change and storing the input data in the cell model.
             this.$box.find('textarea.name').on('change', _.bind(function (evt) {
                 this.model.set('name', $(evt.target).val());
-            }, this));
-
-            // This is an example of reacting on the input change and storing the input data in the cell model.
-            this.$box.find('input.title').on('change', _.bind(function (evt) {
-                this.model.set('title', $(evt.target).val());
             }, this));
 
             this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
@@ -71,12 +62,6 @@ joint.shapes.dialogue.ChoiceView = joint.shapes.devs.ModelView.extend(
             var nameField = this.$box.find('textarea.name');
             if (!nameField.is(':focus'))
                 nameField.val(this.model.get('name'));
-
-            // Example of updating the HTML with a data stored in the cell model.
-            var nameField = this.$box.find('input.title');
-            if (!nameField.is(':focus'))
-                nameField.val(this.model.get('title'));
-
 
             var label = this.$box.find('.label');
             var type = this.model.get('type').slice('dialogue.'.length);
