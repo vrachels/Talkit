@@ -168,18 +168,6 @@ joint.shapes.dialogue.Choice = joint.shapes.devs.Model.extend({
 	)
 });
 
-joint.shapes.dialogue.Branch = joint.shapes.devs.Model.extend({
-	defaults: joint.util.deepSupplement(
-		{
-			type: 'dialogue.Branch',
-			inPorts: ['input'],
-			outPorts: ['output0'],
-			values: []
-		},
-		joint.shapes.dialogue.Base.prototype.defaults
-	)
-});
-
 joint.shapes.dialogue.Set = joint.shapes.devs.Model.extend({
 	defaults: joint.util.deepSupplement(
 		{
