@@ -377,7 +377,8 @@ function doSave() {
 
 			const graphObj = graph.toJSON();
 			const editorOpts = {
-				doAutoSave: !!autosaveid
+				doAutoSave: !!autosaveid,
+				currentCategory
 			};
 			localStorage[filename] = JSON.stringify({ graphObj, editorOpts });
 		}
@@ -502,6 +503,7 @@ function parseFile(filedata) {
 		if (loadObj.editorOpts.doAutoSave) {
 			autosave();
 		}
+		ChangeCategory(loadObj.editorOpts.currentCategory);
 	}
 	else {
 		graph.fromJSON(loadObj);
@@ -638,6 +640,9 @@ function AddNodeScript(url) {
 	document.head.appendChild(script);
 }
 function ChangeCategory(newCategory) {
+	if(!newCategory) newCategory = 'Dialog';
+	if(!Object.keys(nodeCreateLists).includes(newCategory)) newCategory = 'Dialog';
+
 	currentCategory = newCategory;
 	CreateContextMenu();
 }
