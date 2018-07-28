@@ -650,7 +650,7 @@ function ChangeCategory(newCategory) {
 function CreateContextMenu() {
 	var nodeCreateList = nodeCreateLists[currentCategory];
 	var items = [
-		{ type: 'group', text: 'New Node', alias: '1-0', items: nodeCreateList.slice(0).sort((a, b) => a.text.localeCompare(b.text)) },
+		{ type: 'group', text: `${currentCategory} Nodes`, alias: '1-0', items: nodeCreateList.slice(0).sort((a, b) => a.text.localeCompare(b.text)) },
 		{ type: 'splitLine' },
 		{
 			type: 'group', text: 'File', alias: '2-0', items: [
