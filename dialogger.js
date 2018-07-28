@@ -613,8 +613,15 @@ $('#menu button.close').click(function () {
 
 $(window).trigger('resize');
 
-var nodeCreateList = [];
-function AddNodeType(text, obj) {
+var nodeCreateLists = {};
+var currentCategory = 'Dialog';
+
+function AddNodeType(text, obj, category) {
+	if (category === undefined) category = 'Dialog';
+
+	var nodeCreateList = nodeCreateLists[category];
+	if (nodeCreateList === undefined) nodeCreateList = nodeCreateLists[category] = [];
+
 	var newObj = {
 		text,
 		alias: `1-${nodeCreateList.length + 1}`,
@@ -630,26 +637,48 @@ function AddNodeScript(url) {
 	script.src = url;
 	document.head.appendChild(script);
 }
-function NodeScriptDone() {
-	if (--numNodeScriptsPending === 0) {
-		var items = [
-			{ type: 'group', text: 'Nodes', alias: '1-0', items: nodeCreateList.sort((a, b) => a.text.localeCompare(b.text)) },
-			{ type: 'splitLine' },
-			{
-				type: 'group', text: 'File', alias: '2-0', items: [
-					{ text: 'AutoSave', alias: '2-1', action: autosave },
-					{ text: 'Save', alias: '2-2', action: save },
-					{ text: 'Load', alias: '2-3', action: load },
-					{ text: 'Import', id: 'import', alias: '2-4', action: importFile },
-					{ text: 'New', alias: '2-5', action: clear },
-					{ text: 'Export', id: 'export', alias: '2-6', action: exportFile },
-					{ text: 'Export game file', id: 'export-game', alias: '2-7', action: exportGameFile },
-				]
-			},
-		];
+function ChangeCategory(newCategory) {
+	currentCategory = newCategory;
+	CreateContextMenu();
+}
 
-		$('#paper').contextmenu({ width: 150, items });
+function CreateContextMenu() {
+	var nodeCreateList = nodeCreateLists[currentCategory];
+	var items = [
+		{ type: 'group', text: 'New Node', alias: '1-0', items: nodeCreateList.slice(0).sort((a, b) => a.text.localeCompare(b.text)) },
+		{ type: 'splitLine' },
+		{
+			type: 'group', text: 'File', alias: '2-0', items: [
+				{ text: 'AutoSave', alias: '2-1', action: autosave },
+				{ text: 'Save', alias: '2-2', action: save },
+				{ text: 'Load', alias: '2-3', action: load },
+				{ text: 'Import', id: 'import', alias: '2-4', action: importFile },
+				{ text: 'New', alias: '2-5', action: clear },
+				{ text: 'Export', id: 'export', alias: '2-6', action: exportFile },
+				{ text: 'Export game file', id: 'export-game', alias: '2-7', action: exportGameFile },
+			]
+		},
+	];
+
+	const categories = Object.keys(nodeCreateLists);
+	if (categories.length > 1) {
+		items.push({
+			type: 'group',
+			text: 'Style',
+			alias: '3-0',
+			items: categories.map((category, idx) => ({
+				text: category,
+				alias: `3-${idx + 1}`,
+				action: () => ChangeCategory(category),
+			})),
+		});
 	}
+
+	$('#paper').contextmenu({ width: 150, items });
+}
+
+function NodeScriptDone() {
+	if (--numNodeScriptsPending === 0) CreateContextMenu();
 }
 
 // Import support node files
