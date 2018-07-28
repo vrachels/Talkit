@@ -313,13 +313,48 @@ function promptFilename(callback) {
 			});
 	}
 	else {
-		filename = prompt('Filename', defaultFilename);
+		filename = prompt('Enter filename to save:', defaultFilename);
 		callback(filename);
 	}
 }
 
 function applyTextFields() {
 	$('input[type=text]').blur();
+}
+
+var autosaveid;
+var flashsetids = [];
+var flashids = [];
+function autosave() {
+	if (!filename)
+		promptFilename(doSave);
+
+	if (!filename) {
+		alert('You must have a save target in order to autosave');
+		return;
+	}
+	if (autosaveid === undefined) {
+		flash('autosave in 60s');
+		autosaveid = window.setInterval(save, 60000);
+
+		function warnAuto(pre) {
+			var startId = window.setTimeout(() => {
+				flashsetids = flashsetids.filter((v) => v !== startId);
+				var msg = `autosave in ${pre}s`;
+				flash(msg);
+				var repeatId = window.setInterval(function () { flash(msg) }, 60000);
+				flashids.push(repeatId);
+			}, 60000 - (1000 * pre));
+			flashsetids.push(startId);
+		}
+		[1, 2, 3, 4, 5, 10, 20, 30, 40, 50].forEach(warnAuto);
+	} else {
+		window.clearInterval(autosaveid);
+		flashsetids.forEach(window.clearInterval);
+		flashids.forEach(window.clearInterval);
+		delete autosaveid;
+		flash('disabled autosave');
+	}
 }
 
 function save() {
@@ -339,7 +374,12 @@ function doSave() {
 		else {
 			if (!localStorage[filename])
 				addFileEntry(filename);
-			localStorage[filename] = JSON.stringify(graph);
+
+			const graphObj = graph.toJSON();
+			const editorOpts = {
+				doAutoSave: !!autosaveid
+			};
+			localStorage[filename] = JSON.stringify({ graphObj, editorOpts });
 		}
 		flash('Saved ' + filename);
 	}
@@ -355,7 +395,8 @@ function load() {
 				if (!err && files.length == 1) {
 					graph.clear();
 					filename = files[0];
-					graph.fromJSON(JSON.parse(fs.readFileSync(filename, 'utf8')));
+					const filedata = fs.readFileSync(filename, 'utf8');
+					parseFile(filedata);
 				}
 			});
 	}
@@ -452,12 +493,26 @@ $('#container').mouseup(function (e) {
 	$('body').css('cursor', 'default');
 });
 
+function parseFile(filedata) {
+	graph.clear();
+
+	const loadObj = JSON.parse(filedata);
+	if (loadObj.hasOwnProperty('graphObj')) {
+		graph.fromJSON(loadObj.graphObj);
+		if (loadObj.editorOpts.doAutoSave) {
+			autosave();
+		}
+	}
+	else {
+		graph.fromJSON(loadObj);
+	}
+}
+
 function handleFiles(files) {
 	filename = files[0].name;
 	var fileReader = new FileReader();
 	fileReader.onload = function (e) {
-		graph.clear();
-		graph.fromJSON(JSON.parse(e.target.result));
+		parseFile(e.target.result);
 	};
 	fileReader.readAsText(files[0]);
 }
@@ -540,9 +595,8 @@ function addFileEntry(name) {
 	});
 
 	entry.on('click', function (event) {
-		graph.clear();
-		graph.fromJSON(JSON.parse(localStorage[name]));
 		filename = name;
+		parseFile(localStorage[name]);
 		$('#menu').hide();
 	});
 }
@@ -583,12 +637,13 @@ function NodeScriptDone() {
 			{ type: 'splitLine' },
 			{
 				type: 'group', text: 'File', alias: '2-0', items: [
-					{ text: 'Save', alias: '2-1', action: save },
-					{ text: 'Load', alias: '2-2', action: load },
-					{ text: 'Import', id: 'import', alias: '2-3', action: importFile },
-					{ text: 'New', alias: '2-4', action: clear },
-					{ text: 'Export', id: 'export', alias: '2-5', action: exportFile },
-					{ text: 'Export game file', id: 'export-game', alias: '2-6', action: exportGameFile },
+					{ text: 'AutoSave', alias: '2-1', action: autosave },
+					{ text: 'Save', alias: '2-2', action: save },
+					{ text: 'Load', alias: '2-3', action: load },
+					{ text: 'Import', id: 'import', alias: '2-4', action: importFile },
+					{ text: 'New', alias: '2-5', action: clear },
+					{ text: 'Export', id: 'export', alias: '2-6', action: exportFile },
+					{ text: 'Export game file', id: 'export-game', alias: '2-7', action: exportGameFile },
 				]
 			},
 		];
@@ -622,5 +677,5 @@ if (loadOnStart != null) {
 	console.log(loadOnStart);
 	graph.clear();
 	filename = loadOnStart;
-	graph.fromJSON(JSON.parse(localStorage[loadOnStart]));
+	parseFile(localStorage[loadOnStart]);
 }
