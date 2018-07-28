@@ -608,6 +608,7 @@ AddNodeScript('nodes/node.js');
 AddNodeScript('nodes/choice.js');
 AddNodeScript('nodes/select.js');
 AddNodeScript('nodes/search.js');
+AddNodeScript('nodes/result.js');
 //#endregion
 
 // Commit the local script
