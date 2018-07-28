@@ -352,7 +352,7 @@ function autosave() {
 		window.clearInterval(autosaveid);
 		flashsetids.forEach(window.clearInterval);
 		flashids.forEach(window.clearInterval);
-		delete autosaveid;
+		autosaveid = undefined;
 		flash('disabled autosave');
 	}
 }
