@@ -20,7 +20,6 @@ joint.shapes.dialogue.CallView = joint.shapes.dialogue.BaseView.extend({
         '    <button class="remove">-</button>',
         '    <input type="text" class="context" placeholder="context" />',
         '    <input type="text" class="method" placeholder="method" />',
-        '    <input type="text" class="parameter" placeholder="parameter" />',
         '</div>'
     ].join(''),
 
@@ -65,16 +64,16 @@ joint.shapes.dialogue.CallView = joint.shapes.dialogue.BaseView.extend({
         var parameters = this.model.get('parameters');
         var parameterFields = this.$box.find('input.parameter');
 
-        // Add parameter fields if necessary
         for (var i = parameterFields.length; i < parameters.length; i++) {
-            // Prevent paper from handling pointerdown.
+            // parameter boxes
             var field1 = $('<input type="text" class="parameter" />');
-            field1.attr('placeholder', 'Parameter ' + (i + 1).toString());
+            field1.attr('placeholder', 'Arg: Value');
             field1.attr('index', i);
             this.$box.append(field1);
+
+            // Prevent paper from handling pointerdown.
             field1.on('mousedown click', function (evt) { evt.stopPropagation(); });
 
-            // This is an example of reacting on the input change and storing the input data in the cell model.
             field1.on('change', _.bind(function (evt) {
                 var parameters = this.model.get('parameters').slice(0);
                 parameters[$(evt.target).attr('index')] = $(evt.target).val();
