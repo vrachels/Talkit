@@ -613,17 +613,22 @@ var nodeCreateLists = {};
 var currentCategory = 'Dialog';
 
 function AddNodeType(text, obj, category) {
-	if (category === undefined) category = 'Dialog';
+	if (category === undefined) category = 'Default';
+
+	var aliasIdx = (category === 'Default') ? 0 : 1;
 
 	var nodeCreateList = nodeCreateLists[category];
 	if (nodeCreateList === undefined) nodeCreateList = nodeCreateLists[category] = [];
 
 	var newObj = {
 		text,
-		alias: `1-${nodeCreateList.length + 1}`,
+		alias: `${aliasIdx}-${nodeCreateList.length + 1}`,
 		action: add(obj),
 	}
-	nodeCreateList.push(newObj);
+
+	// sorted insertion would be 'better', but these lists will be very small, so keep it simple.
+	nodeCreateList.push(newObj)
+	nodeCreateList.sort((a, b) => a.text.localeCompare(b.text));
 	CreateContextMenu();
 }
 
@@ -642,9 +647,16 @@ function ChangeCategory(newCategory) {
 }
 
 function CreateContextMenu() {
+	// clone the lists, becuase building the menu modifies the arrays
+	var defaultNodeList = nodeCreateLists.Default;
 	var nodeCreateList = nodeCreateLists[currentCategory];
-	var items = [
-		{ type: 'group', text: `${currentCategory} Nodes`, alias: '1-0', items: nodeCreateList.slice(0).sort((a, b) => a.text.localeCompare(b.text)) },
+
+	var items = [];
+
+	if (defaultNodeList) items.push({ type: 'group', text: `Nodes`, alias: '0-0', items: defaultNodeList.slice() });
+	if (nodeCreateList) items.push({ type: 'group', text: `${currentCategory} Nodes`, alias: '1-0', items: nodeCreateList.slice() });
+
+	items = items.concat([
 		{ type: 'splitLine' },
 		{
 			type: 'group', text: 'File', alias: '2-0', items: [
@@ -657,9 +669,9 @@ function CreateContextMenu() {
 				{ text: 'Export game file', id: 'export-game', alias: '2-7', action: exportGameFile },
 			]
 		},
-	];
+	]);
 
-	const categories = Object.keys(nodeCreateLists);
+	const categories = Object.keys(nodeCreateLists).filter(category => category !== 'Default');
 	if (categories.length > 1) {
 		items.push({
 			type: 'group',
@@ -688,6 +700,7 @@ AddNodeScript('nodes/choice.js');
 AddNodeScript('nodes/select.js');
 AddNodeScript('nodes/search.js');
 AddNodeScript('nodes/result.js');
+AddNodeScript('nodes/sequence.js');
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD

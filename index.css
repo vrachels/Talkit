@@ -181,6 +181,18 @@ Node styles
     float:right;
 }
 
+.node input[type="checkbox"]
+{
+	pointer-events: auto;
+	border: none;
+	box-sizing: border-box;
+	background-color: #456;
+	color: #fff;
+    width: auto;
+	padding: 4px;
+    margin-right: 10px;
+}
+
 .node textarea 
 {
 	pointer-events: auto;	
@@ -191,6 +203,7 @@ Node styles
 }
 .node .label
 {
+	vertical-align:middle;
 	color: #ddd;
 }
 

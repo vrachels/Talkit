@@ -17,4 +17,4 @@ allTypes['dialogue.Text'] = true;
 allTypesExceptChoice['dialogue.Text'] = true;
 allowableConnections['dialogue.Text'] = allTypesExceptChoice;
 
-AddNodeType('Text', joint.shapes.dialogue.Text);
+AddNodeType('Text', joint.shapes.dialogue.Text, 'Dialog');

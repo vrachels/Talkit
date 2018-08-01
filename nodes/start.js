@@ -18,7 +18,6 @@ joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView.extend(
                 '<div class="node">',
                 '<span class="label"></span>',
                 '<button class="delete">x</button>',
-                '',
                 '</div>',
             ].join(''),
     });
