@@ -6,8 +6,6 @@ joint.shapes.dialogue.Result = joint.shapes.devs.Model.extend(
                 type: 'dialogue.Result',
                 inPorts: ['input'],
                 outPorts: ['output'],
-                title: '',
-                name: '',
             },
             joint.shapes.dialogue.Base.prototype.defaults
         ),

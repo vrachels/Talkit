@@ -99,8 +99,7 @@ joint.shapes.dialogue = {};
 
 joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 	{
-		defaults: joint.util.deepSupplement
-			(
+		defaults: joint.util.deepSupplement(
 			{
 				type: 'dialogue.Base',
 				size: { width: 250, height: 135 },
@@ -114,7 +113,7 @@ joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 				},
 			},
 			joint.shapes.devs.Model.prototype.defaults
-			),
+		),
 	});
 joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
 	{
@@ -138,7 +137,7 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
 		'<span class="label"></span>',
 		'<button class="delete">x</button>',
 		'<input type="actor" class="actor" placeholder="Actor" />',
-		'<p> <textarea type="text" class="name" rows="4" cols="27" placeholder="Speech"></textarea></p>',
+		'<p> <textarea type="text" class="text" rows="4" cols="27" placeholder="Speech"></textarea></p>',
 		'</div>',
 	].join(''),
 
@@ -149,34 +148,31 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
 		joint.shapes.devs.ModelView.prototype.initialize.apply(this, arguments);
 
 		this.$box = $(_.template(this.template)());
+
 		// Prevent paper from handling pointerdown.
 		this.$box.find('input').on('mousedown click', function (evt) { evt.stopPropagation(); });
-
-		// Prevent paper from handling pointerdown.
 		this.$box.find('textarea').on('mousedown click', function (evt) { evt.stopPropagation(); });
 
+		// delete this object
+		this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
 
-		// This is an example of reacting on the input change and storing the input data in the cell model.
-		this.$box.find('input.name').on('change', _.bind(function (evt) {
-			this.model.set('name', $(evt.target).val());
-		}, this));
+		// Store the data in the cell model on input change
 
-		// This is an example of reacting on the input change and storing the input data in the cell model.
 		this.$box.find('input.actor').on('change', _.bind(function (evt) {
 			this.model.set('actor', $(evt.target).val());
 		}, this));
 
-
-		// This is an example of reacting on the input change and storing the input data in the cell model. TEXTAREA
-		this.$box.find('textarea.name').on('change', _.bind(function (evt) {
-			this.model.set('name', $(evt.target).val());
+		this.$box.find('textarea.text').on('change', _.bind(function (evt) {
+			this.model.set('text', $(evt.target).val());
 		}, this));
 
-		this.$box.find('.delete').on('click', _.bind(this.model.remove, this.model));
 		// Update the box position whenever the underlying model changes.
 		this.model.on('change', this.updateBox, this);
 		// Remove the box when the model gets removed from the graph.
 		this.model.on('remove', this.removeBox, this);
+
+		// fixups
+		this.model.set('text', this.model.get('text') || this.model.get('name'));
 
 		this.updateBox();
 	},
@@ -192,20 +188,14 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
 		// Set the position and dimension of the box so that it covers the JointJS element.
 		var bbox = this.model.getBBox();
 
-		// Example of updating the HTML with a data stored in the cell model.
-		var nameField = this.$box.find('input.name');
-		if (!nameField.is(':focus'))
-			nameField.val(this.model.get('name'));
-
-		// Example of updating the HTML with a data stored in the cell model.
+		// Update the HTML with a data stored in the cell model.
 		var actorField = this.$box.find('input.actor');
 		if (!actorField.is(':focus'))
 			actorField.val(this.model.get('actor'));
 
-		// Example of updating the HTML with a data stored in the cell model.
-		var textAreaField = this.$box.find('textarea.name');
+		var textAreaField = this.$box.find('textarea.text');
 		if (!textAreaField.is(':focus'))
-			textAreaField.val(this.model.get('name'));
+			textAreaField.val(this.model.get('text') || this.model.get('name'));
 
 		var label = this.$box.find('.label');
 		var type = this.model.get('type').slice('dialogue.'.length);
@@ -218,7 +208,6 @@ joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
 		this.$box.remove();
 	},
 });
-
 
 var gameDataHandler = {};
 var linkDataHandler = {};
@@ -247,13 +236,18 @@ function gameData() {
 		var node = {
 			type: cell.type.slice('dialogue.'.length),
 			id: cell.id,
-			name: cell.name,
-			actor: cell.actor,
-			title: cell.title,
 		};
 
 		var handler = gameDataHandler[cell.type];
-		if (handler) handler(cell, node);
+		if (handler)
+		{
+			handler(cell, node);
+		}
+		else
+		{
+			node.text = cell.text ? cell.text : undefined;
+			node.actor = cell.actor ? cell.actor : undefined;
+		}
 
 		nodes.push(node);
 		nodesByID[cell.id] = node;
@@ -640,8 +634,8 @@ function AddNodeScript(url) {
 	document.head.appendChild(script);
 }
 function ChangeCategory(newCategory) {
-	if(!newCategory) newCategory = 'Dialog';
-	if(!Object.keys(nodeCreateLists).includes(newCategory)) newCategory = 'Dialog';
+	if (!newCategory) newCategory = 'Dialog';
+	if (!Object.keys(nodeCreateLists).includes(newCategory)) newCategory = 'Dialog';
 
 	currentCategory = newCategory;
 	CreateContextMenu();

@@ -20,20 +20,33 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
                 '<div class="node">',
                 '<span class="label"></span>',
                 '<button class="delete">x</button>',
-                '<input type="text" class="name" placeholder="Variable" />',
+                '<input type="text" class="text" placeholder="Variable" />',
                 '<input type="text" class="value" placeholder="Value" />',
                 '</div>',
             ].join(''),
 
         initialize: function () {
             joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
+
+            this.$box.find('input.text').on('change', _.bind(function (evt) {
+                this.model.set('text', $(evt.target).val());
+            }, this));
+
             this.$box.find('input.value').on('change', _.bind(function (evt) {
                 this.model.set('value', $(evt.target).val());
             }, this));
+
+            // fixups
+            this.model.set('text', this.model.get('text') || this.model.get('name'));
         },
 
         updateBox: function () {
             joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
+
+            var actorField = this.$box.find('input.text');
+            if (!actorField.is(':focus'))
+                actorField.val(this.model.get('text') || this.model.get('name'));
+
             var field = this.$box.find('input.value');
             if (!field.is(':focus'))
                 field.val(this.model.get('value'));
