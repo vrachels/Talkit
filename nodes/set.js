@@ -65,4 +65,3 @@ allTypesExceptChoice['dialogue.Set'] = true;
 allowableConnections['dialogue.Set'] = allTypesExceptChoice;
 
 AddNodeType('Set', joint.shapes.dialogue.Set);
-NodeScriptDone();

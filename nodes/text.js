@@ -18,4 +18,3 @@ allTypesExceptChoice['dialogue.Text'] = true;
 allowableConnections['dialogue.Text'] = allTypesExceptChoice;
 
 AddNodeType('Text', joint.shapes.dialogue.Text);
-NodeScriptDone();

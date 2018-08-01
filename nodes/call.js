@@ -114,4 +114,3 @@ allTypesExceptChoice['dialogue.Call'] = true;
 allowableConnections['dialogue.Call'] = allTypesExceptChoice;
 
 AddNodeType('Call', joint.shapes.dialogue.Call);
-NodeScriptDone();

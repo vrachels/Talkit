@@ -94,4 +94,3 @@ allChoiceTypes['dialogue.Choice'] = true,
     allowableConnections['dialogue.Choice'] = allTypesExceptChoice;
 
 AddNodeType('Choice', joint.shapes.dialogue.Choice);
-NodeScriptDone();

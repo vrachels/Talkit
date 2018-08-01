@@ -138,4 +138,3 @@ allTypesExceptChoice['dialogue.Branch'] = true;
 allowableConnections['dialogue.Branch'] = allTypesExceptChoice;
 
 AddNodeType('Branch', joint.shapes.dialogue.Branch);
-NodeScriptDone();

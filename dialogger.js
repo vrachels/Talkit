@@ -624,15 +624,15 @@ function AddNodeType(text, obj, category) {
 		action: add(obj),
 	}
 	nodeCreateList.push(newObj);
+	CreateContextMenu();
 }
 
-var numNodeScriptsPending = 1;
 function AddNodeScript(url) {
-	++numNodeScriptsPending;
 	var script = document.createElement("script");
 	script.src = url;
 	document.head.appendChild(script);
 }
+
 function ChangeCategory(newCategory) {
 	if (!newCategory) newCategory = 'Dialog';
 	if (!Object.keys(nodeCreateLists).includes(newCategory)) newCategory = 'Dialog';
@@ -676,10 +676,6 @@ function CreateContextMenu() {
 	$('#paper').contextmenu({ width: 150, items });
 }
 
-function NodeScriptDone() {
-	if (--numNodeScriptsPending === 0) CreateContextMenu();
-}
-
 // Import support node files
 //#region
 AddNodeScript('nodes/start.js');
@@ -693,11 +689,6 @@ AddNodeScript('nodes/select.js');
 AddNodeScript('nodes/search.js');
 AddNodeScript('nodes/result.js');
 //#endregion
-
-// Commit the local script
-NodeScriptDone();
-
-// commit the context menu
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
 if (loadOnStart != null) {

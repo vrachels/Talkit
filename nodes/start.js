@@ -26,4 +26,3 @@ joint.shapes.dialogue.StartView = joint.shapes.dialogue.BaseView.extend(
 allowableConnections['dialogue.Start'] = allTypesExceptChoice;
 
 AddNodeType('Start', joint.shapes.dialogue.Start);
-NodeScriptDone();

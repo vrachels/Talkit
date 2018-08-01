@@ -71,4 +71,3 @@ allChoiceTypes['dialogue.Search'] = true;
 allowableConnections['dialogue.Search'] = allChoiceTypes;
 
 AddNodeType('Search', joint.shapes.dialogue.Search);
-NodeScriptDone();
