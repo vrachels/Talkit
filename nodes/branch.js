@@ -21,7 +21,7 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 				'<button class="delete">x</button>',
 				'<button class="add">+</button>',
 				'<button class="remove">-</button>',
-				'<input type="text" class="text" placeholder="Variable" />',
+				'<input type="text" id="variable" placeholder="Variable" />',
 				'<input type="text" value="Default" readonly/>',
 				'</div>',
 			].join(''),
@@ -29,15 +29,15 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 		initialize: function () {
 			joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
 
-			this.$box.find('input.text').on('change', _.bind(function (evt) {
-				this.model.set('text', $(evt.target).val());
+			this.$box.find('#variable').on('change', _.bind(function (evt) {
+				this.model.set('variable', $(evt.target).val());
 			}, this));
 
 			this.$box.find('.add').on('click', _.bind(this.addPort, this));
 			this.$box.find('.remove').on('click', _.bind(this.removePort, this));
 
 			// fixups
-			this.model.set('text', this.model.get('text') || this.model.get('name'));
+			this.model.set('variable', this.model.get('variable') || this.model.get('text') || this.model.get('name'));
 		},
 
 		removePort: function () {
@@ -65,9 +65,9 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 		updateBox: function () {
 			joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
 
-			var actorField = this.$box.find('input.text');
-			if (!actorField.is(':focus'))
-				actorField.val(this.model.get('text') || this.model.get('name'));
+			var varField = this.$box.find('#variable');
+			if (!varField.is(':focus'))
+				varField.val(this.model.get('variable') || this.model.get('text') || this.model.get('name'));
 
 			var values = this.model.get('values');
 			var valueFields = this.$box.find('input.value');
@@ -111,7 +111,7 @@ joint.shapes.dialogue.BranchView = joint.shapes.dialogue.BaseView.extend(
 	});
 
 gameDataHandler['dialogue.Branch'] = function (cell, node) {
-	node.variable = cell.name;
+	node.variable = cell.variable;
 	node.branches = {};
 	for (var j = 0; j < cell.values.length; j++) {
 		var branch = cell.values[j];

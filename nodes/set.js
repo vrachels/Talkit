@@ -29,7 +29,7 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
             joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
 
             this.$box.find('input.text').on('change', _.bind(function (evt) {
-                this.model.set('text', $(evt.target).val());
+                this.model.set('variable', $(evt.target).val());
             }, this));
 
             this.$box.find('input.value').on('change', _.bind(function (evt) {
@@ -37,25 +37,25 @@ joint.shapes.dialogue.SetView = joint.shapes.dialogue.BaseView.extend(
             }, this));
 
             // fixups
-            this.model.set('text', this.model.get('text') || this.model.get('name'));
+            this.model.set('variable', this.model.get('variable') || this.model.get('text') || this.model.get('name'));
         },
 
         updateBox: function () {
             joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
 
-            var actorField = this.$box.find('input.text');
-            if (!actorField.is(':focus'))
-                actorField.val(this.model.get('text') || this.model.get('name'));
+            var varField = this.$box.find('input.text');
+            if (!varField.is(':focus'))
+                varField.val(this.model.get('variable') || this.model.get('text') || this.model.get('name'));
 
-            var field = this.$box.find('input.value');
-            if (!field.is(':focus'))
-                field.val(this.model.get('value'));
+            var valField = this.$box.find('input.value');
+            if (!valField.is(':focus'))
+                valField.val(this.model.get('value'));
         },
     });
 
 
 gameDataHandler['dialogue.Set'] = function (cell, node) {
-    node.variable = cell.name;
+    node.variable = cell.variable;
     node.value = cell.value;
     node.next = null;
 }
