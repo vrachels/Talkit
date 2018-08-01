@@ -36,11 +36,11 @@ joint.shapes.dialogue.SequenceView = joint.shapes.dialogue.BaseView.extend(
 			this.$box.find('input.checkbox').on('mousedown click', function (evt) { evt.stopPropagation(); });
 
 			this.$box.find('#StopOnFirstSuccess').on('change', _.bind(function (evt) {
-				this.model.set('StopOnFirstSuccess', $(evt.target).val());
+				this.model.set('StopOnFirstSuccess', $(evt.target).prop("checked"));
 			}, this));
 
 			this.$box.find('#IgnoreResult').on('change', _.bind(function (evt) {
-				this.model.set('IgnoreResult', $(evt.target).val());
+				this.model.set('IgnoreResult', $(evt.target).prop("checked"));
 			}, this));
 
 			this.$box.find('.add').on('click', _.bind(this.addPort, this));
@@ -66,16 +66,8 @@ joint.shapes.dialogue.SequenceView = joint.shapes.dialogue.BaseView.extend(
 		updateBox: function () {
 			joint.shapes.dialogue.BaseView.prototype.updateBox.apply(this, arguments);
 
-			var actorField = this.$box.find('#StopOnFirstSuccess');
-			if (!actorField.is(':focus'))
-				actorField.val(this.model.get('StopOnFirstSuccess'));
-
-			var actorField = this.$box.find('#IgnoreResult');
-			if (!actorField.is(':focus'))
-				actorField.val(this.model.get('IgnoreResult'));
-
-			var values = this.model.get('values');
-			var valueFields = this.$box.find('input.value');
+			this.$box.find('#StopOnFirstSuccess').prop("checked", this.model.get('StopOnFirstSuccess'));
+			this.$box.find('#IgnoreResult').prop("checked", this.model.get('IgnoreResult'));
 		},
 
 		updateSize: function () {
@@ -100,7 +92,7 @@ linkDataHandler['Sequence'] = function (cell, source, target, scope) {
 
 allTypes['dialogue.Sequence'] = true;
 allTypesExceptChoice['dialogue.Sequence'] = true;
-allowableConnections['dialogue.Sequence'] = Object.assign({}, allTypesExceptChoice, { 'dialogue.Search': true } );
+allowableConnections['dialogue.Sequence'] = Object.assign({}, allTypesExceptChoice, { 'dialogue.Search': true });
 
 AddNodeType('Sequence', joint.shapes.dialogue.Sequence, 'Behavior');
 AddNodeType('Sequence', joint.shapes.dialogue.Sequence, 'Interaction');
