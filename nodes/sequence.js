@@ -92,7 +92,7 @@ linkDataHandler['Sequence'] = function (cell, source, target, scope) {
 
 allTypes['dialogue.Sequence'] = true;
 allTypesExceptChoice['dialogue.Sequence'] = true;
-allowableConnections['dialogue.Sequence'] = Object.assign({}, allTypesExceptChoice, { 'dialogue.Search': true });
+allowableConnections['dialogue.Sequence'] = allTypes;
 
 AddNodeType('Sequence', joint.shapes.dialogue.Sequence, 'Behavior');
 AddNodeType('Sequence', joint.shapes.dialogue.Sequence, 'Interaction');

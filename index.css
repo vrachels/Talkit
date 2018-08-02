@@ -235,6 +235,16 @@ Node styles
 	color: rgb(15, 179, 0);
 }
 
+.node .label.Exit
+{
+	color: rgb(255, 234, 43);
+}
+
+.node .label.Fail
+{
+	color: rgb(255, 0, 0);
+}
+
 button
 {
 	float: right;
@@ -270,7 +280,6 @@ button.delete:hover
 	width: 100%;
 	padding: 4px;
 	margin-top: 2px;
- 
 }
 
 .node

@@ -115,23 +115,20 @@ joint.shapes.dialogue.Base = joint.shapes.devs.Model.extend(
 			joint.shapes.devs.Model.prototype.defaults
 		),
 	});
-joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend(
-	{
-		defaults: joint.util.deepSupplement(
-			{
-				type: 'dialogue.Unknown',
-				inPorts: ['input'],
-				outPorts: ['output'],
-				attrs: {
-					'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
-				}
-			},
-			joint.shapes.dialogue.Base.prototype.defaults
-		)
-	});
-
 
 joint.shapes.dialogue.BaseView = joint.shapes.devs.ModelView.extend({
+	defaults: joint.util.deepSupplement(
+		{
+			type: 'dialogue.Unknown',
+			inPorts: ['input'],
+			outPorts: ['output'],
+			attrs: {
+				'.outPorts circle': { unlimitedConnections: ['dialogue.Choice'] }
+			}
+		},
+		joint.shapes.dialogue.Base.prototype.defaults
+	),
+
 	template: [
 		'<div class="node">',
 		'<span class="label"></span>',
@@ -701,6 +698,8 @@ AddNodeScript('nodes/select.js');
 AddNodeScript('nodes/search.js');
 AddNodeScript('nodes/result.js');
 AddNodeScript('nodes/sequence.js');
+AddNodeScript('nodes/exit.js');
+AddNodeScript('nodes/fail.js');
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
