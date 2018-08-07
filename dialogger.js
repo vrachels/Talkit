@@ -700,6 +700,8 @@ AddNodeScript('nodes/result.js');
 AddNodeScript('nodes/sequence.js');
 AddNodeScript('nodes/exit.js');
 AddNodeScript('nodes/fail.js');
+AddNodeScript('nodes/subGraph.js');
+AddNodeScript('nodes/random.js');
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
