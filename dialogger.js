@@ -272,7 +272,7 @@ var defaultFilename = 'dialogue.json';
 
 function setFilename(name) {
 	filename = name;
-	document.title = `Dialogger${name ? ': ' : ''}${name}`;
+	document.title = `Dialogger${name ? ': ' : ''}${name ? name : ''}`;
 }
 
 function flash(text) {
@@ -707,6 +707,7 @@ AddNodeScript('nodes/exit.js');
 AddNodeScript('nodes/fail.js');
 AddNodeScript('nodes/subGraph.js');
 AddNodeScript('nodes/random.js');
+AddNodeScript('nodes/exec.js');
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
