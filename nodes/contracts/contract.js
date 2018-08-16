@@ -25,19 +25,7 @@ joint.shapes.dialogue.ContractView = joint.shapes.dialogue.BaseView.extend({
         <div class="node">
             <span class="label"></span>
             <button class="delete">x</button>
-            <button class="add">+</button>
-            <button class="remove">-</button>
             <input type="text" class="name" placeholder="Contract Name" />
-            <p>
-                <div id="parties">
-                    <label>Party Def:</label>
-                    <input type="text" id="0" class="name" placeholder="Party 1" />
-                    <input type="text" id="1" class="name" placeholder="Party 2" />
-                    <br>
-                    <button id="addParty" class="add">+</button>
-                    <button id="delParty" class="remove">-</button>
-                </div>
-            </p>
             <p>
                 <label>Bounty Def:</label>
                 <div id="Bounty1">
@@ -154,7 +142,11 @@ gameDataHandler['dialogue.Contract'] = function (cell, node) {
 }
 
 var allContractTypes = {};
+AddNodeScript('nodes/contracts/bountyopt.js');
+AddNodeScript('nodes/contracts/bountyspec.js');
+AddNodeScript('nodes/contracts/eventsequence.js');
 AddNodeScript('nodes/contracts/eventspec.js');
+AddNodeScript('nodes/contracts/party.js');
 
 allTypes['dialogue.Contract'] = true;
 allTypesExceptChoice['dialogue.Contract'] = true;

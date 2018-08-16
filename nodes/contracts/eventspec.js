@@ -39,9 +39,9 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
     initialize: function () {
         joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
-        var params = this.$box.find('#Params');
-        params.find('.add').on('click', _.bind(this.addParameter, this));
-        params.find('.remove').on('click', _.bind(this.removeParameter, this));
+        var paramDiv = this.$box.find('#Params');
+        paramDiv.find('.add').on('click', _.bind(this.addParameter, this));
+        paramDiv.find('.remove').on('click', _.bind(this.removeParameter, this));
         this.$box.find('#name').on('change', _.bind(function (e) {
             this.model.set('name', $(e.target).val());
         }, this));
@@ -72,7 +72,7 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
     removeParameter: function () {
         if (this.model.get('parameters').length > 1) {
-            var parameters = this.model.get('parameters');
+            var parameters = this.model.get('parameters').slice(0);
             parameters.pop();
             this.model.set('parameters', parameters);
             this.updateSize();
@@ -80,7 +80,7 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
     },
 
     addParameter: function () {
-        var parameters = this.model.get('parameters');
+        var parameters = this.model.get('parameters').slice(0);
         parameters.push(null);
         this.model.set('parameters', parameters);
         this.updateSize();
@@ -103,20 +103,20 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
         var parameters = this.model.get('parameters');
         var parameterFields = this.$box.find('input.parameter');
-        var params = this.$box.find('#Params');
+        var paramDiv = this.$box.find('#Params');
 
         for (var i = parameterFields.length; i < parameters.length; i++) {
             // parameter boxes
-            var field1 = $('<input type="text" class="parameter" />');
-            field1.attr('placeholder', 'Key: Type: Value');
-            field1.attr('index', i);
-            params.append(field1);
+            var field = $('<input type="text" class="parameter" />');
+            field.attr('placeholder', 'Key: Type: Value');
+            field.attr('index', i);
+            paramDiv.append(field);
 
             // Prevent paper from handling pointerdown.
-            field1.on('mousedown click', function (evt) { evt.stopPropagation(); });
+            field.on('mousedown click', function (evt) { evt.stopPropagation(); });
 
-            field1.on('change', _.bind(function (evt) {
-                var parameters = this.model.get('parameters');
+            field.on('change', _.bind(function (evt) {
+                var parameters = this.model.get('parameters').slice(0);
                 var target = $(evt.target);
                 parameters[target.attr('index')] = target.val();
                 this.model.set('parameters', parameters);
