@@ -141,6 +141,37 @@ gameDataHandler['dialogue.Contract'] = function (cell, node) {
     node.next = null;
 }
 
+linkDataHandler['Party'] = function (cell, source, target) {
+    if (!target) return false;
+
+    delete source.next;
+
+    switch(target.type)
+    {
+        case 'Party':
+        {
+            if(!source.parties) source.parties = [];
+            source.parties.push(target.id);
+            break;
+        }
+        case 'EventSpec':
+        {
+            if(!source.simple) source.simple = [];
+            source.simple.push(target.id);
+            break;
+        }
+        case 'EventSeq':
+        {
+            source.sequence = target.id;
+            break;
+        }
+        default: return false;
+    }
+
+
+    return true;
+}
+
 var allContractTypes = {};
 AddNodeScript('nodes/contracts/bountyopt.js');
 AddNodeScript('nodes/contracts/bountyspec.js');
