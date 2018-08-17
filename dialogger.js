@@ -64,6 +64,10 @@ function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkVie
 	var sourceType = cellViewS.model.attributes.type;
 	var targetType = cellViewT.model.attributes.type;
 
+	var portAllowedTypes = magnetS.getAttribute('allowedConnections');
+	if (portAllowedTypes && portAllowedTypes.indexOf(targetType) === -1)
+		return false;
+
 	var forSource = allowableConnections[sourceType];
 	var allowable = forSource[targetType];
 
