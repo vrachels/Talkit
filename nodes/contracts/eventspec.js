@@ -15,7 +15,7 @@ joint.shapes.dialogue.EventSpec = joint.shapes.devs.Model.extend({
 joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
     template:
         `
-        <div class="node">
+        <div class="node EventSpec">
             <span class="label"></span>
             <button class="delete">x</button>
             <input type="text" id="name" class="noprop" placeholder="Name" />

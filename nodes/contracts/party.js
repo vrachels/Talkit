@@ -7,9 +7,8 @@ joint.shapes.dialogue.Party = joint.shapes.devs.Model.extend({
             outPorts: ['bounties'],
             attrs:
             {
-                '.outPorts circle': { unlimitedConnections: ['dialogue.BountySpec'], }
+                '.outPorts circle': { unlimitedConnections: ['dialogue.BountyOpt'], allowedConnections: ['dialogue.BountyOpt'] },
             },
-            members: []
         },
         joint.shapes.dialogue.Base.prototype.defaults
     )
@@ -18,7 +17,7 @@ joint.shapes.dialogue.Party = joint.shapes.devs.Model.extend({
 joint.shapes.dialogue.PartyView = joint.shapes.dialogue.BaseView.extend({
     template:
         `
-        <div class="node">
+        <div class="node Party">
             <span class="label"></span>
             <button class="delete">x</button>
             <input type="text" id="name" class="noprop" placeholder="Name" />
@@ -130,18 +129,15 @@ gameDataHandler['dialogue.Party'] = function (cell, node) {
 
 linkDataHandler['Party'] = function (cell, source, target) {
     if (!target) return false;
-    switch(target.type)
-    {
-        case 'BountySpec': break;
-        default: return false;
-    }
+    if (target.type !== 'BountySpec') return false;
 
     delete source.next;
 
-	source.bounty = target.id
+    if(!source.bountyOpts) source.bountyOpts = [];
+    source.bountyOpts.push(target.id);
+
     return true;
 }
-
 
 allTypes['dialogue.Party'] = true;
 allContractTypes['dialogue.Party'] = true;
