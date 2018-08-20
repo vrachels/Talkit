@@ -1,0 +1,75 @@
+:root {
+	--party-node-color: #ffed00;
+	--bountyopt-node-color: #ff9900;
+	--eventspec-node-color: rgb(204, 136, 204);
+	--eventsequence-node-color: #a200ff;
+}
+
+.node .label.Party
+{
+	color: var(--party-node-color);
+}
+
+.node .label.BountyOpt
+{
+	color: var(--bountyopt-node-color)
+}
+
+.node .label.EventSpec
+{
+	color: var(--eventspec-node-color)
+}
+
+.node .label.EventSequence
+{
+	color: var(--eventsequence-node-color)
+}
+
+.Contract .outPorts .port0 circle
+{
+	fill: var(--party-node-color);
+}
+
+.Contract .outPorts .port1 circle
+{
+	fill: var(--eventspec-node-color)
+}
+
+.Contract .outPorts .port2 circle
+{
+	fill: var(--eventsequence-node-color)
+}
+
+.Party .inPorts circle
+{
+	fill: var(--party-node-color);
+}
+
+.Party .outPorts circle
+{
+	fill: var(--bountyopt-node-color);
+}
+
+.BountyOpt .inPorts circle
+{
+	fill: var(--bountyopt-node-color);
+}
+
+.EventSpec .inPorts circle
+{
+	fill: var(--eventspec-node-color);
+}
+
+.EventSeq .inPorts circle
+{
+	fill: var(--eventsequence-node-color);
+}
+
+.EventSeq .outPorts .port0 circle
+{
+	fill: var(--eventsequence-node-color);
+}
+.EventSeq .outPorts .port1 circle
+{
+	fill: var(--eventspec-node-color);
+}

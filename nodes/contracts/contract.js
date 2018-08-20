@@ -102,6 +102,7 @@ AddNodeScript('nodes/contracts/party.js');
 
 allTypes['dialogue.Contract'] = true;
 allTypesExceptChoice['dialogue.Contract'] = true;
-allowableConnections['dialogue.Contract'] = allContractTypes;
 
 AddNodeType('Contract', joint.shapes.dialogue.Contract, 'Contracts');
+
+AddCss('nodes/contracts/contract.css');

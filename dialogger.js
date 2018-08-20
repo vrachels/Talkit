@@ -683,6 +683,17 @@ function AddNodeScript(url) {
 	}
 }
 
+function AddCss(filename) {
+	var head = document.head;
+	var link = document.createElement("link");
+
+	link.type ="text/css";
+	link.rel = "stylesheet";
+	link.href = filename;
+
+	head.appendChild(link);
+}
+
 
 function ChangeCategory(newCategory) {
 	if (!newCategory) newCategory = 'Dialog';
