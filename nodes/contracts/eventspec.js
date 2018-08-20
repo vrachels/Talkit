@@ -2,7 +2,7 @@ joint.shapes.dialogue.EventSpec = joint.shapes.devs.Model.extend({
     defaults: joint.util.deepSupplement(
         {
             type: 'dialogue.EventSpec',
-            size: { width: 200, height: 165 },
+            size: { width: 200, height: 190 },
             inPorts: ['input'],
             parameters: [
                 'Action: Action: ?',
@@ -19,6 +19,7 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
             <span class="label"></span>
             <button class="delete">x</button>
             <input type="text" id="name" class="noprop" placeholder="Name" />
+            <input type="text" id="party" class="noprop" placeholder="PartyId" />
             <input type="text" id="scriptLong" class="noprop" placeholder="Long" />
             <p>
                 <div id="Params">
@@ -44,6 +45,9 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
         paramDiv.find('.remove').on('click', _.bind(this.removeParameter, this));
         this.$box.find('#name').on('change', _.bind(function (e) {
             this.model.set('name', $(e.target).val());
+        }, this));
+        this.$box.find('#party').on('change', _.bind(function (e) {
+            this.model.set('party', $(e.target).val());
         }, this));
         this.$box.find('#scriptLong').on('change', _.bind(function (e) {
             this.model.set('scriptLong', $(e.target).val());
@@ -93,6 +97,10 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
         if (!name.is(':focus')) {
             name.val(this.model.get('name'));
         }
+        var party = this.$box.find('#party');
+        if (!party.is(':focus')) {
+            party.val(this.model.get('party'));
+        }
         var scriptLong = this.$box.find('#scriptLong');
         if (!scriptLong.is(':focus')) {
             scriptLong.val(this.model.get('scriptLong'));
@@ -140,12 +148,13 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
     updateSize: function () {
         var width = this.model.get('size').width;
-        this.model.set('size', { width, height: 165 + Math.max(0, (this.model.get('parameters').length - 1) * 25) });
+        this.model.set('size', { width, height: 190 + Math.max(0, (this.model.get('parameters').length - 1) * 25) });
     }
 });
 
 gameDataHandler['dialogue.EventSpec'] = function (cell, node) {
     node.name = cell.name;
+    node.party = cell.party;
     node.scriptLong = cell.scriptLong;
     node.isRestriction = cell.isRestriction;
     node.isOngoing = cell.isOngoing;

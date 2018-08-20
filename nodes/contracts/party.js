@@ -141,6 +141,6 @@ linkDataHandler['Party'] = function (cell, source, target) {
 
 allTypes['dialogue.Party'] = true;
 allContractTypes['dialogue.Party'] = true;
-allowableConnections['dialogue.Party'] = { ['dialog.BountySpec']: true };
+allowableConnections['dialogue.Party'] = { ['dialogue.BountyOpt']: true };
 
 AddNodeType('Party', joint.shapes.dialogue.Party, 'Contracts');

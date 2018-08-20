@@ -2,13 +2,14 @@ joint.shapes.dialogue.Contract = joint.shapes.devs.Model.extend({
     defaults: joint.util.deepSupplement(
         {
             type: 'dialogue.Contract',
-            size: { width: 200, height: 120, },
+            size: { width: 200, height: 140, },
             inPorts: ['input'],
-            outPorts: ['parties', 'simple'],
+            outPorts: ['parties', 'simple', 'seq'],
             attrs:
             {
                 '.outPorts>.port0>circle': { unlimitedConnections: ['dialogue.Party'], allowedConnections: ['dialogue.Party'] },
                 '.outPorts>.port1>circle': { unlimitedConnections: ['dialogue.EventSpec'], allowedConnections: ['dialogue.EventSpec'] },
+                '.outPorts>.port2>circle': { unlimitedConnections: ['dialogue.EventSeq'], allowedConnections: ['dialogue.EventSeq'] },
             },
         },
         joint.shapes.dialogue.Base.prototype.defaults
@@ -22,18 +23,6 @@ joint.shapes.dialogue.ContractView = joint.shapes.dialogue.BaseView.extend({
             <span class="label"></span>
             <button class="delete">x</button>
             <input type="text" class="name" placeholder="Contract Name" />
-            <p>
-                <label>Bounty Def:</label>
-                <div id="Bounty1">
-                    <input type="text" id="partyId" placeholder="PartyId" />
-                    <div id="Option1">
-                        <div id="Thing1">
-                            <input type="text" class="Thing" placeholder="Thing" />
-                            <input type="text" class="Count" placeholder="Count" />
-                        </div>
-                    </div>
-                </div>
-            </p>
         </div>
         `,
 
@@ -102,13 +91,11 @@ linkDataHandler['Contract'] = function (cell, source, target) {
         default: return false;
     }
 
-
     return true;
 }
 
 var allContractTypes = {};
 AddNodeScript('nodes/contracts/bountyopt.js');
-AddNodeScript('nodes/contracts/bountyspec.js');
 AddNodeScript('nodes/contracts/eventsequence.js');
 AddNodeScript('nodes/contracts/eventspec.js');
 AddNodeScript('nodes/contracts/party.js');

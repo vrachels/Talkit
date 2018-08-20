@@ -1,8 +1,7 @@
 :root {
 	/* todo, move to subdirs, add utility to append .css file */
 	--party-node-color: #ffed00;
-	--bountyspec-node-color: #ff9900;
-	--bountyopt-node-color: #ff5e00;
+	--bountyopt-node-color: #ff9900;
 	--eventspec-node-color: rgb(204, 136, 204);
 	--eventsequence-node-color: #a200ff;
 }
@@ -258,10 +257,6 @@ Node styles
 	color: var(--party-node-color);
 }
 
-.node .label.BountySpec
-{
-	color: var(--bountyspec-node-color)
-}
 .node .label.BountyOpt
 {
 	color: var(--bountyopt-node-color)
@@ -357,14 +352,19 @@ SVG overrides -- note the capitalized node type
 	fill: var(--eventspec-node-color)
 }
 
+.Contract .outPorts .port2 circle
+{
+	fill: var(--eventsequence-node-color)
+}
+
 .Party .inPorts circle
 {
 	fill: var(--party-node-color);
 }
 
-.BountySpec .inPorts circle
+.Party .outPorts circle
 {
-	fill: var(--bountyspec-node-color);
+	fill: var(--bountyopt-node-color);
 }
 
 .BountyOpt .inPorts circle
@@ -377,9 +377,18 @@ SVG overrides -- note the capitalized node type
 	fill: var(--eventspec-node-color);
 }
 
-.EventSequence .inPorts circle
+.EventSeq .inPorts circle
 {
 	fill: var(--eventsequence-node-color);
+}
+
+.EventSeq .outPorts .port0 circle
+{
+	fill: var(--eventsequence-node-color);
+}
+.EventSeq .outPorts .port1 circle
+{
+	fill: var(--eventspec-node-color);
 }
 
 /*
