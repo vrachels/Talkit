@@ -65,8 +65,8 @@ function validateConnection(cellViewS, magnetS, cellViewT, magnetT, end, linkVie
 	var targetType = cellViewT.model.attributes.type;
 
 	var portAllowedTypes = magnetS.getAttribute('allowedConnections');
-	if (portAllowedTypes && portAllowedTypes.indexOf(targetType) === -1)
-		return false;
+	if (portAllowedTypes)
+		return (portAllowedTypes.indexOf(targetType) >= 0);
 
 	var forSource = allowableConnections[sourceType];
 	var allowable = forSource[targetType];
@@ -638,11 +638,51 @@ function AddNodeType(text, obj, category) {
 	CreateContextMenu();
 }
 
+var scriptCount = 0;
+var doneCount = 0;
+var allDone = false;
 function AddNodeScript(url) {
+	++scriptCount;
+
 	var script = document.createElement("script");
+	script.onerror = handleLoad;
+	script.onload = handleLoad;
+	script.onreadystatechange = handleReady;
 	script.src = url;
 	document.head.appendChild(script);
+
+	var done = false;
+	function handleLoad() {
+		if (done) return;
+		done = true;
+		++doneCount;
+		checkAllDone();
+	}
+
+	function handleReady() {
+		if (done) return;
+		if (script.readyState !== 'complete') return;
+		done = true;
+		++doneCount;
+		checkAllDone();
+	}
+
+	function checkAllDone() {
+		if (doneCount !== scriptCount) return;
+		if (allDone) return;
+		allDone = true;
+
+		///AUTOLOAD IF URL HAS ? WILDCARD
+		if (loadOnStart != null) {
+			loadOnStart += '.json';
+			console.log(loadOnStart);
+			graph.clear();
+			setFilename(loadOnStart);
+			parseFile(localStorage[loadOnStart]);
+		}
+	}
 }
+
 
 function ChangeCategory(newCategory) {
 	if (!newCategory) newCategory = 'Dialog';
@@ -714,12 +754,3 @@ AddNodeScript('nodes/random.js');
 AddNodeScript('nodes/exec.js');
 AddNodeScript('nodes/contracts/contract.js');
 //#endregion
-
-///AUTOLOAD IF URL HAS ? WILDCARD
-if (loadOnStart != null) {
-	loadOnStart += '.json';
-	console.log(loadOnStart);
-	graph.clear();
-	setFilename(loadOnStart);
-	parseFile(localStorage[loadOnStart]);
-}
