@@ -1,3 +1,11 @@
+:root {
+	/* todo, move to subdirs, add utility to append .css file */
+	--party-node-color: #ffed00;
+	--bountyopt-node-color: #ff9900;
+	--eventspec-node-color: rgb(204, 136, 204);
+	--eventsequence-node-color: #a200ff;
+}
+
 html, body 
 {
 	padding: 0px;
@@ -190,7 +198,6 @@ Node styles
 	color: #fff;
     width: auto;
 	padding: 4px;
-    margin-right: 10px;
 }
 
 .node textarea 
@@ -243,6 +250,26 @@ Node styles
 .node .label.Fail
 {
 	color: rgb(255, 0, 0);
+}
+
+.node .label.Party
+{
+	color: var(--party-node-color);
+}
+
+.node .label.BountyOpt
+{
+	color: var(--bountyopt-node-color)
+}
+
+.node .label.EventSpec
+{
+	color: var(--eventspec-node-color)
+}
+
+.node .label.EventSequence
+{
+	color: var(--eventsequence-node-color)
 }
 
 button
@@ -313,6 +340,55 @@ SVG overrides -- note the capitalized node type
 .Search .outPorts .port1 circle
 {
 	fill: rgb(204, 136, 204);
+}
+
+.Contract .outPorts .port0 circle
+{
+	fill: var(--party-node-color);
+}
+
+.Contract .outPorts .port1 circle
+{
+	fill: var(--eventspec-node-color)
+}
+
+.Contract .outPorts .port2 circle
+{
+	fill: var(--eventsequence-node-color)
+}
+
+.Party .inPorts circle
+{
+	fill: var(--party-node-color);
+}
+
+.Party .outPorts circle
+{
+	fill: var(--bountyopt-node-color);
+}
+
+.BountyOpt .inPorts circle
+{
+	fill: var(--bountyopt-node-color);
+}
+
+.EventSpec .inPorts circle
+{
+	fill: var(--eventspec-node-color);
+}
+
+.EventSeq .inPorts circle
+{
+	fill: var(--eventsequence-node-color);
+}
+
+.EventSeq .outPorts .port0 circle
+{
+	fill: var(--eventsequence-node-color);
+}
+.EventSeq .outPorts .port1 circle
+{
+	fill: var(--eventspec-node-color);
 }
 
 /*
