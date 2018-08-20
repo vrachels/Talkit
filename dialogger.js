@@ -711,11 +711,8 @@ AddNodeScript('nodes/exit.js');
 AddNodeScript('nodes/fail.js');
 AddNodeScript('nodes/subGraph.js');
 AddNodeScript('nodes/random.js');
-<<<<<<< HEAD
-AddNodeScript('nodes/contracts/contract.js');
-=======
 AddNodeScript('nodes/exec.js');
->>>>>>> master
+AddNodeScript('nodes/contracts/contract.js');
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
