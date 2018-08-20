@@ -274,6 +274,11 @@ function gameData() {
 var filename = null;
 var defaultFilename = 'dialogue.json';
 
+function setFilename(name) {
+	filename = name;
+	document.title = `Dialogger${name ? ': ' : ''}${name ? name : ''}`;
+}
+
 function flash(text) {
 	var $flash = $('#flash');
 	$flash.text(text);
@@ -296,19 +301,19 @@ function offerDownload(name, data) {
 
 function promptFilename(callback) {
 	if (fs) {
-		filename = null;
+		setFilename(null);
 		window.frame.openDialog(
 			{
 				type: 'save',
 			}, function (err, files) {
 				if (!err && files.length == 1) {
-					filename = files[0];
+					setFilename(files[0]);
 					callback(filename);
 				}
 			});
 	}
 	else {
-		filename = prompt('Enter filename to save:', defaultFilename);
+		setFilename(prompt('Enter filename to save:', defaultFilename));
 		callback(filename);
 	}
 }
@@ -390,7 +395,7 @@ function load() {
 			}, function (err, files) {
 				if (!err && files.length == 1) {
 					graph.clear();
-					filename = files[0];
+					setFilename(files[0]);
 					const filedata = fs.readFileSync(filename, 'utf8');
 					parseFile(filedata);
 				}
@@ -440,7 +445,7 @@ function add(constructor) {
 
 function clear() {
 	graph.clear();
-	filename = null;
+	setFilename(null);
 }
 
 var paper = new joint.dia.Paper(
@@ -506,7 +511,7 @@ function parseFile(filedata) {
 }
 
 function handleFiles(files) {
-	filename = files[0].name;
+	setFilename(files[0].name);
 	var fileReader = new FileReader();
 	fileReader.onload = function (e) {
 		parseFile(e.target.result);
@@ -592,7 +597,7 @@ function addFileEntry(name) {
 	});
 
 	entry.on('click', function (event) {
-		filename = name;
+		setFilename(name);
 		parseFile(localStorage[name]);
 		$('#menu').hide();
 	});
@@ -706,7 +711,11 @@ AddNodeScript('nodes/exit.js');
 AddNodeScript('nodes/fail.js');
 AddNodeScript('nodes/subGraph.js');
 AddNodeScript('nodes/random.js');
+<<<<<<< HEAD
 AddNodeScript('nodes/contracts/contract.js');
+=======
+AddNodeScript('nodes/exec.js');
+>>>>>>> master
 //#endregion
 
 ///AUTOLOAD IF URL HAS ? WILDCARD
@@ -714,6 +723,6 @@ if (loadOnStart != null) {
 	loadOnStart += '.json';
 	console.log(loadOnStart);
 	graph.clear();
-	filename = loadOnStart;
+	setFilename(loadOnStart);
 	parseFile(localStorage[loadOnStart]);
 }
