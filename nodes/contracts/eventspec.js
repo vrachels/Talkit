@@ -2,7 +2,7 @@ joint.shapes.dialogue.EventSpec = joint.shapes.devs.Model.extend({
     defaults: joint.util.deepSupplement(
         {
             type: 'dialogue.EventSpec',
-            size: { width: 200, height: 190 },
+            size: { width: 200, height: 200 },
             inPorts: ['input'],
             parameters: [
                 'Action: Action: ?',
@@ -20,14 +20,10 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
             <button class="delete">x</button>
             <input type="text" id="name" class="noprop" placeholder="Name" />
             <input type="text" id="party" class="noprop" placeholder="PartyId" />
-            <input type="text" id="scriptLong" class="noprop" placeholder="Long" />
             <p>
-                <div id="Params">
-                    <label>Params:</label>
-                    <button class="add">+</button>
-                    <button class="remove">-</button>
-                    <input type="text" class="parameter" placeholder="Action: Action: Value" />
-                </div>
+                <input type="text" id="Activity" placeholder="Activity" />
+                <input type="text" id="DirectObject" placeholder="DirectObject" />
+                <input type="text" id="IndirectObject" placeholder="IndirectObject" />
             </p>
             <p>
                 <input type="checkbox" id="isRestriction" />
@@ -41,16 +37,21 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
     initialize: function () {
         joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
         var paramDiv = this.$box.find('#Params');
-        paramDiv.find('.add').on('click', _.bind(this.addParameter, this));
-        paramDiv.find('.remove').on('click', _.bind(this.removeParameter, this));
         this.$box.find('#name').on('change', _.bind(function (e) {
             this.model.set('name', $(e.target).val());
         }, this));
         this.$box.find('#party').on('change', _.bind(function (e) {
             this.model.set('party', $(e.target).val());
         }, this));
-        this.$box.find('#scriptLong').on('change', _.bind(function (e) {
-            this.model.set('scriptLong', $(e.target).val());
+
+        this.$box.find('#Activity').on('change', _.bind(function (e) {
+            this.model.set('activity', $(e.target).val());
+        }, this));
+        this.$box.find('#DirectObject').on('change', _.bind(function (e) {
+            this.model.set('directobject', $(e.target).val());
+        }, this));
+        this.$box.find('#IndirectObject').on('change', _.bind(function (e) {
+            this.model.set('indirectobject', $(e.target).val());
         }, this));
 
         this.$box.find('#isRestriction').on('change', _.bind(function (e) {
@@ -65,29 +66,6 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
         }, this));
 
         this.$box.find('input').on('mousedown click', function (evt) { evt.stopPropagation(); });
-
-        this.$box.find('input.parameter').on('change', _.bind(function (evt) {
-            var parameters = this.model.get('parameters');
-            var target = $(evt.target);
-            parameters[0] = target.val();
-            this.model.set('parameters', parameters);
-        }, this));
-    },
-
-    removeParameter: function () {
-        if (this.model.get('parameters').length > 1) {
-            var parameters = this.model.get('parameters').slice(0);
-            parameters.pop();
-            this.model.set('parameters', parameters);
-            this.updateSize();
-        }
-    },
-
-    addParameter: function () {
-        var parameters = this.model.get('parameters').slice(0);
-        parameters.push(null);
-        this.model.set('parameters', parameters);
-        this.updateSize();
     },
 
     updateBox: function () {
@@ -101,64 +79,33 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
         if (!party.is(':focus')) {
             party.val(this.model.get('party'));
         }
-        var scriptLong = this.$box.find('#scriptLong');
-        if (!scriptLong.is(':focus')) {
-            scriptLong.val(this.model.get('scriptLong'));
+
+        var activity = this.$box.find('#Activity');
+        if (!activity.is(':focus')) {
+            activity.val(this.model.get('activity'));
+        }
+        var directobject = this.$box.find('#DirectObject');
+        if (!directobject.is(':focus')) {
+            directobject.val(this.model.get('directobject'));
+        }
+        var indirectobject = this.$box.find('#IndirectObject');
+        if (!indirectobject.is(':focus')) {
+            indirectobject.val(this.model.get('indirectobject'));
         }
 
         this.$box.find('#isRestriction').prop("checked", this.model.get('isRestriction'));
         this.$box.find('#isOngoing').prop("checked", this.model.get('isOngoing'));
-
-        var parameters = this.model.get('parameters');
-        var parameterFields = this.$box.find('input.parameter');
-        var paramDiv = this.$box.find('#Params');
-
-        for (var i = parameterFields.length; i < parameters.length; i++) {
-            // parameter boxes
-            var field = $('<input type="text" class="parameter" />');
-            field.attr('placeholder', 'Key: Type: Value');
-            field.attr('index', i);
-            paramDiv.append(field);
-
-            // Prevent paper from handling pointerdown.
-            field.on('mousedown click', function (evt) { evt.stopPropagation(); });
-
-            field.on('change', _.bind(function (evt) {
-                var parameters = this.model.get('parameters').slice(0);
-                var target = $(evt.target);
-                parameters[target.attr('index')] = target.val();
-                this.model.set('parameters', parameters);
-            }, this));
-        }
-
-        // Remove value fields if necessary
-        for (var j = parameters.length; j < parameterFields.length; j++) {
-            $(parameterFields[j]).remove();
-        }
-
-        // Update value fields
-        parameterFields = this.$box.find('input.parameter');
-        for (var k = 0; k < parameterFields.length; k++) {
-            var field2 = $(parameterFields[k]);
-            if (!field2.is(':focus')) {
-                field2.val(parameters[k]);
-            }
-        }
     },
-
-    updateSize: function () {
-        var width = this.model.get('size').width;
-        this.model.set('size', { width, height: 190 + Math.max(0, (this.model.get('parameters').length - 1) * 25) });
-    }
 });
 
 gameDataHandler['dialogue.EventSpec'] = function (cell, node) {
     node.name = cell.name;
     node.party = cell.party;
-    node.scriptLong = cell.scriptLong;
+    node.activity = cell.activity;
+    node.directobject = cell.directobject;
+    node.indirectobject = cell.indirectobject;
     node.isRestriction = cell.isRestriction;
     node.isOngoing = cell.isOngoing;
-    node.parameters = cell.parameters;
     node.next = null;
 }
 
