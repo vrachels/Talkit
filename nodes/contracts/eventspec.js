@@ -2,7 +2,7 @@ joint.shapes.dialogue.EventSpec = joint.shapes.devs.Model.extend({
     defaults: joint.util.deepSupplement(
         {
             type: 'dialogue.EventSpec',
-            size: { width: 200, height: 200 },
+            size: { width: 200, height: 235 },
             inPorts: ['input'],
             parameters: [
                 'Action: Action: ?',
@@ -21,6 +21,10 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
             <input type="text" id="name" class="noprop" placeholder="Name" />
             <input type="text" id="party" class="noprop" placeholder="PartyId" />
             <p>
+                <input type="checkbox" id="isIdentityCheck" />
+                <label>Validate Subject by Identity</label>
+            </p>
+            <p>
                 <input type="text" id="Activity" placeholder="Activity" />
                 <input type="text" id="DirectObject" placeholder="DirectObject" />
                 <input type="text" id="IndirectObject" placeholder="IndirectObject" />
@@ -36,7 +40,7 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
     initialize: function () {
         joint.shapes.dialogue.BaseView.prototype.initialize.apply(this, arguments);
-        var paramDiv = this.$box.find('#Params');
+
         this.$box.find('#name').on('change', _.bind(function (e) {
             this.model.set('name', $(e.target).val());
         }, this));
@@ -57,12 +61,14 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
         this.$box.find('#isRestriction').on('change', _.bind(function (e) {
             var value = $(e.target).prop("checked");
             this.model.set('isRestriction', value);
-            if (value) this.model.set('isOngoing', false);
         }, this));
         this.$box.find('#isOngoing').on('change', _.bind(function (e) {
             var value = $(e.target).prop("checked");
             this.model.set('isOngoing', value);
-            if (value) this.model.set('isRestriction', false);
+        }, this));
+        this.$box.find('#isIdentityCheck').on('change', _.bind(function (e) {
+            var value = $(e.target).prop("checked");
+            this.model.set('isIdentityCheck', value);
         }, this));
 
         this.$box.find('input').on('mousedown click', function (evt) { evt.stopPropagation(); });
@@ -95,6 +101,7 @@ joint.shapes.dialogue.EventSpecView = joint.shapes.dialogue.BaseView.extend({
 
         this.$box.find('#isRestriction').prop("checked", this.model.get('isRestriction'));
         this.$box.find('#isOngoing').prop("checked", this.model.get('isOngoing'));
+        this.$box.find('#isIdentityCheck').prop("checked", this.model.get('isIdentityCheck'));
     },
 });
 
@@ -106,6 +113,7 @@ gameDataHandler['dialogue.EventSpec'] = function (cell, node) {
     node.indirectobject = cell.indirectobject;
     node.isRestriction = cell.isRestriction;
     node.isOngoing = cell.isOngoing;
+    node.isIdentityCheck = cell.isIdentityCheck;
     node.next = null;
 }
 
