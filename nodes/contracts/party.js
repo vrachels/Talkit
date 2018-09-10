@@ -9,6 +9,7 @@ joint.shapes.dialogue.Party = joint.shapes.devs.Model.extend({
             {
                 '.outPorts circle': { unlimitedConnections: ['dialogue.BountyOpt'], allowedConnections: ['dialogue.BountyOpt'] },
             },
+            members: [],
         },
         joint.shapes.dialogue.Base.prototype.defaults
     )
